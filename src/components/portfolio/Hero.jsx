@@ -45,7 +45,7 @@ export default function Hero() {
       <div className="max-w-6xl w-full z-10 grid lg:grid-cols-12 gap-12 lg:gap-10 items-center">
 
         {/* ── Left Column: Cool Typography & Bio (7 cols) ── */}
-        <div className="lg:col-span-7 flex flex-col items-start text-left space-y-6">
+        <div className="lg:col-span-7 flex flex-col items-start text-left space-y-6 order-2 lg:order-1">
 
           {/* Status Badge */}
           <div className="hero-tag">
@@ -183,7 +183,7 @@ export default function Hero() {
         </div>
 
         {/* ── Right Column: Interactive Profile Mockup Card (5 cols) ── */}
-        <div className="lg:col-span-5 flex justify-center lg:justify-end">
+        <div className="lg:col-span-5 flex justify-center lg:justify-end order-1 lg:order-2 w-full">
           <div className="relative w-full max-w-sm sm:max-w-md">
             
             {/* Ambient radiant card glow */}

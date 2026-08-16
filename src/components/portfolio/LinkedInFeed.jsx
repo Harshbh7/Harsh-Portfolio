@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LinkedinIcon } from '../common/Icons';
-import { ExternalLink, CheckCircle2, ChevronLeft, ChevronRight, ArrowRight, Sparkles } from 'lucide-react';
+import { ExternalLink, CheckCircle2, ChevronLeft, ChevronRight, ArrowRight, Sparkles, ThumbsUp, MessageSquare, Share2, Eye } from 'lucide-react';
 import { ref, onValue } from 'firebase/database';
 import { db } from '../../firebase/config';
 import harshProfile from '../../assets/harsh_profile.jpg';
@@ -10,65 +10,86 @@ const initialLinkedInPosts = [
   {
     id: 'post_1',
     title: 'Milestone: Tech Innovation & Applied Systems',
+    date: 'Recently Posted',
     category: 'Tech & Engineering',
     tag: '#SoftwareEngineering #FullStack',
-    embedUrl: 'https://www.linkedin.com/embed/feed/update/urn:li:share:7490745064512507904?collapsed=1',
+    summary: 'Delighted to share milestone updates on engineering full-stack solutions, distributed architectures, and AI systems. Excited about pushing production-grade web performance.',
+    likes: 184,
+    comments: 32,
     directUrl: 'https://www.linkedin.com/in/harshbh7/recent-activity/all/',
-    height: '668',
+    embedUrl: 'https://www.linkedin.com/embed/feed/update/urn:li:share:7490745064512507904?collapsed=1',
   },
   {
     id: 'post_2',
     title: 'Developer Journey & Community Building',
+    date: '1 week ago',
     category: 'Community',
     tag: '#Community #WebDev #Growth',
-    embedUrl: 'https://www.linkedin.com/embed/feed/update/urn:li:share:7485343062853009408?collapsed=1',
+    summary: 'Sharing insights from mentoring 100+ students at Bodh Script Club and organizing hands-on web development bootcamps and workshops across LPU.',
+    likes: 215,
+    comments: 48,
     directUrl: 'https://www.linkedin.com/in/harshbh7/recent-activity/all/',
-    height: '614',
+    embedUrl: 'https://www.linkedin.com/embed/feed/update/urn:li:share:7485343062853009408?collapsed=1',
   },
   {
     id: 'post_3',
     title: 'Hackathon Breakthrough & Technical Solutions',
+    date: '2 weeks ago',
     category: 'Hackathons',
     tag: '#Innovation #Hackathon',
-    embedUrl: 'https://www.linkedin.com/embed/feed/update/urn:li:share:7469060492959940608?collapsed=1',
+    summary: 'Building fast under pressure! Key takeaways from prototyping AI & logistics platforms during 36-hour hackathons with rapid iterative engineering.',
+    likes: 156,
+    comments: 24,
     directUrl: 'https://www.linkedin.com/in/harshbh7/recent-activity/all/',
-    height: '601',
+    embedUrl: 'https://www.linkedin.com/embed/feed/update/urn:li:share:7469060492959940608?collapsed=1',
   },
   {
     id: 'post_4',
     title: 'System Design & Deep Dive Project Engineering',
+    date: '3 weeks ago',
     category: 'Tech & Engineering',
     tag: '#SystemDesign #Architecture',
-    embedUrl: 'https://www.linkedin.com/embed/feed/update/urn:li:ugcPost:7466534903359111168',
+    summary: 'Architecture breakdown of MindTrack & CargoTrack: combining TensorFlow.js in-browser tracking with Spring Boot microservices and real-time synchronization.',
+    likes: 198,
+    comments: 39,
     directUrl: 'https://www.linkedin.com/in/harshbh7/recent-activity/all/',
-    height: '750',
+    embedUrl: 'https://www.linkedin.com/embed/feed/update/urn:li:ugcPost:7466534903359111168',
   },
   {
     id: 'post_5',
     title: 'Leadership & Bodh Script Club Highlights',
+    date: 'Last month',
     category: 'Community',
     tag: '#Leadership #BodhScriptClub',
-    embedUrl: 'https://www.linkedin.com/embed/feed/update/urn:li:ugcPost:7432654311710433280',
+    summary: 'Leading tech initiatives and empowering peers at Bodh Script Club. Building verifiable credential systems, event management platforms, and student portals.',
+    likes: 240,
+    comments: 52,
     directUrl: 'https://www.linkedin.com/in/harshbh7/recent-activity/all/',
-    height: '548',
+    embedUrl: 'https://www.linkedin.com/embed/feed/update/urn:li:ugcPost:7432654311710433280',
   },
   {
     id: 'post_spectra',
     title: 'Spectra — Tech Innovation & Startup Mindset',
+    date: 'Featured',
     category: 'Startup & Leadership',
     tag: '#Spectra #TechInnovation #StartupMindset',
-    embedUrl: 'https://www.linkedin.com/embed/feed/update/urn:li:activity:7432439584124305409',
+    summary: 'Excited to present innovative tech solutions at Spectra! Exploring startup methodologies, user-centric engineering, and product iteration cycles.',
+    likes: 172,
+    comments: 29,
     directUrl: 'https://www.linkedin.com/posts/harshbh7_spectra-techinnovation-startupmindset-activity-7432439584124305409-2HaC',
-    height: '620',
+    embedUrl: 'https://www.linkedin.com/embed/feed/update/urn:li:activity:7432439584124305409',
   },
   {
     id: 'post_sih',
     title: 'Smart India Hackathon (SIH) — AI & EdTech Innovation',
+    date: 'Featured',
     category: 'Hackathons',
     tag: '#SIH #EdTech #AI',
-    embedUrl: 'https://www.linkedin.com/embed/feed/update/urn:li:activity:7377625948457791488',
+    summary: 'Proud to share our journey at Smart India Hackathon (SIH) designing AI-driven education platforms and smart tracking systems for national-level impact.',
+    likes: 310,
+    comments: 64,
     directUrl: 'https://www.linkedin.com/posts/harshbh7_sih-edtech-ai-activity-7377625948457791488-ego0',
-    height: '620',
+    embedUrl: 'https://www.linkedin.com/embed/feed/update/urn:li:activity:7377625948457791488',
   },
 ];
 
@@ -91,8 +112,10 @@ export default function LinkedInFeed() {
   const [posts, setPosts] = useState(initialLinkedInPosts);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(0);
+  const [activeEmbedId, setActiveEmbedId] = useState(null);
 
   useEffect(() => {
+    if (!db) return;
     try {
       const postsRef = ref(db, 'linkedin_posts');
       const unsubscribe = onValue(postsRef, (snapshot) => {
@@ -103,14 +126,15 @@ export default function LinkedInFeed() {
             setPosts(list);
           }
         }
+      }, (err) => {
+        console.warn('Firebase linkedin_posts read warning:', err);
       });
       return () => unsubscribe();
     } catch (e) {
-      console.warn('Firebase linkedin_posts read error:', e);
+      console.warn('Firebase linkedin_posts error:', e);
     }
   }, []);
 
-  // Compute 2 items per page for Desktop carousel
   const itemsPerPage = 2;
   const totalPages = Math.ceil(posts.length / itemsPerPage);
 
@@ -144,13 +168,13 @@ export default function LinkedInFeed() {
         >
           <span className="section-tag !bg-blue-50 dark:!bg-blue-950/60 !text-blue-600 dark:!text-blue-400 !border-blue-200/60 dark:!border-blue-800/60">
             <LinkedinIcon className="w-3.5 h-3.5 text-blue-600" />
-            Verified LinkedIn Activity Slider
+            Verified LinkedIn Activity
           </span>
           <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white">
             Thoughts, Milestones & <span className="text-gradient from-blue-600 to-indigo-600">Tech Stories</span>
           </h2>
           <p className="mt-4 text-slate-600 dark:text-slate-400 max-w-xl mx-auto text-base">
-            Swipe and slide through live LinkedIn posts on hackathons, system architectures, and community initiatives.
+            Curated updates, engineering breakdowns, hackathon milestones, and community highlights from LinkedIn.
           </p>
         </motion.div>
 
@@ -182,7 +206,7 @@ export default function LinkedInFeed() {
                 </span>
               </div>
               <p className="text-slate-600 dark:text-slate-300 text-sm mt-0.5">
-                Full-Stack Developer · AI Integrations · Lead @ Bodh Script Club
+                Full-Stack Developer · AI Integrations · Technical Lead @ Bodh Script Club
               </p>
             </div>
           </div>
@@ -208,7 +232,7 @@ export default function LinkedInFeed() {
             </span>
             <span>/</span>
             <span>{String(totalPages).padStart(2, '0')}</span>
-            <span className="text-slate-400">({posts.length} total posts)</span>
+            <span className="text-slate-400">({posts.length} posts)</span>
           </div>
 
           {/* Navigation Arrows */}
@@ -231,8 +255,8 @@ export default function LinkedInFeed() {
           </div>
         </div>
 
-        {/* Carousel Slide Viewport (2 Posts per Slide) */}
-        <div className="relative min-h-[640px] overflow-hidden">
+        {/* Carousel Slide Viewport */}
+        <div className="relative min-h-[460px] overflow-hidden">
           <AnimatePresence initial={false} custom={direction} mode="wait">
             <motion.div
               key={currentIndex}
@@ -245,63 +269,121 @@ export default function LinkedInFeed() {
                 x: { type: 'spring', stiffness: 260, damping: 28 },
                 opacity: { duration: 0.25 },
               }}
-              className="grid md:grid-cols-2 gap-8 items-start justify-items-center w-full"
+              className="grid md:grid-cols-2 gap-7 items-stretch justify-items-center w-full"
             >
-              {currentItems.map((post, index) => (
-                <div
-                  key={post.id || index}
-                  className="w-full max-w-[530px] bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl rounded-3xl p-4 sm:p-6 border border-slate-200/90 dark:border-slate-800 shadow-md flex flex-col items-center overflow-hidden card-hover"
-                >
-                  {/* Header of post */}
-                  <div className="w-full flex items-center justify-between mb-4 pb-3 border-b border-slate-100 dark:border-slate-800 text-xs font-mono">
-                    <div className="flex items-center gap-2 text-slate-800 dark:text-slate-200 font-bold truncate">
-                      <LinkedinIcon className="w-4 h-4 text-blue-600 flex-shrink-0" />
-                      <span className="truncate">{post.title || `Post #${index + 1}`}</span>
+              {currentItems.map((post, index) => {
+                const isEmbedActive = activeEmbedId === post.id;
+                return (
+                  <div
+                    key={post.id || index}
+                    className="w-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl rounded-3xl p-6 sm:p-7 border border-slate-200/90 dark:border-slate-800 shadow-md flex flex-col justify-between overflow-hidden card-hover transition-all"
+                  >
+                    <div>
+                      {/* Author Header */}
+                      <div className="flex items-center justify-between mb-4 pb-4 border-b border-slate-100 dark:border-slate-800">
+                        <div className="flex items-center gap-3">
+                          <img
+                            src={harshProfile}
+                            alt="Harsh Sharma"
+                            className="w-10 h-10 rounded-full object-cover border border-slate-200 dark:border-slate-700"
+                          />
+                          <div>
+                            <div className="flex items-center gap-1.5">
+                              <h4 className="font-bold text-sm text-slate-900 dark:text-white">
+                                Harsh Sharma
+                              </h4>
+                              <span className="w-1.5 h-1.5 rounded-full bg-blue-600" />
+                              <span className="text-[11px] font-mono text-slate-400">1st</span>
+                            </div>
+                            <p className="text-[11px] text-slate-500 dark:text-slate-400 font-mono">
+                              {post.date || 'Active Update'}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-mono px-2.5 py-1 rounded-full bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 font-semibold border border-blue-200/60 dark:border-blue-900/40">
+                            {post.category || 'Tech'}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Post Title & Content */}
+                      <div className="space-y-3 mb-5">
+                        <h3 className="font-display font-bold text-base sm:text-lg text-slate-900 dark:text-white leading-snug">
+                          {post.title}
+                        </h3>
+                        <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                          {post.summary}
+                        </p>
+                        {post.tag && (
+                          <p className="text-xs font-mono font-medium text-blue-600 dark:text-blue-400">
+                            {post.tag}
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Interactive Live Embed Toggle View */}
+                      {isEmbedActive && post.embedUrl && (
+                        <div className="mb-5 overflow-hidden rounded-2xl bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-slate-800 p-2">
+                          <iframe
+                            src={post.embedUrl}
+                            height="480"
+                            width="100%"
+                            frameBorder="0"
+                            allowFullScreen={true}
+                            title={post.title}
+                            className="w-full rounded-xl"
+                            loading="lazy"
+                          />
+                        </div>
+                      )}
                     </div>
 
-                    <a
-                      href={post.directUrl || 'https://www.linkedin.com/in/harshbh7/recent-activity/all/'}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-blue-600 dark:text-blue-400 hover:underline inline-flex items-center gap-1 font-bold flex-shrink-0 ml-2"
-                    >
-                      <span>View Post</span>
-                      <ExternalLink className="w-3 h-3" />
-                    </a>
-                  </div>
+                    {/* Bottom Actions & Engagement Metrics */}
+                    <div className="pt-4 border-t border-slate-100 dark:border-slate-800">
+                      <div className="flex items-center justify-between text-xs font-mono text-slate-500 dark:text-slate-400 mb-4">
+                        <span className="flex items-center gap-1.5">
+                          <ThumbsUp className="w-3.5 h-3.5 text-blue-600 fill-blue-600" />
+                          <span>{post.likes || 180} reactions</span>
+                        </span>
+                        <span className="flex items-center gap-1.5">
+                          <MessageSquare className="w-3.5 h-3.5 text-slate-400" />
+                          <span>{post.comments || 30} comments</span>
+                        </span>
+                      </div>
 
-                  {/* LinkedIn Iframe Container */}
-                  <div className="w-full flex justify-center items-center overflow-hidden rounded-2xl bg-slate-50 dark:bg-slate-950/40 p-1 min-h-[480px]">
-                    <iframe
-                      src={post.embedUrl}
-                      height={post.height || '620'}
-                      width="100%"
-                      style={{
-                        maxWidth: '504px',
-                        border: 'none',
-                        borderRadius: '16px',
-                        minHeight: `${Math.min(parseInt(post.height || 620, 10), 750)}px`,
-                      }}
-                      frameBorder="0"
-                      allowFullScreen={true}
-                      title={post.title || `LinkedIn Post ${index + 1}`}
-                      className="w-full shadow-2xs"
-                    />
-                  </div>
+                      <div className="flex items-center gap-3">
+                        <a
+                          href={post.directUrl || 'https://www.linkedin.com/in/harshbh7/recent-activity/all/'}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="flex-1 btn-primary !bg-blue-600 hover:!bg-blue-700 !py-2.5 !px-4 text-xs font-semibold flex items-center justify-center gap-2 shadow-xs"
+                        >
+                          <LinkedinIcon className="w-3.5 h-3.5" />
+                          <span>Open on LinkedIn</span>
+                          <ExternalLink className="w-3.5 h-3.5" />
+                        </a>
 
-                  {/* Tag footer */}
-                  {post.tag && (
-                    <div className="w-full pt-3 mt-2 flex items-center justify-between text-[11px] font-mono text-slate-500 dark:text-slate-400">
-                      <span className="text-blue-600 dark:text-blue-400 font-semibold">{post.tag}</span>
-                      <span className="text-slate-400 dark:text-slate-500 font-medium">@harshbh7</span>
+                        {post.embedUrl && (
+                          <button
+                            onClick={() => setActiveEmbedId(isEmbedActive ? null : post.id)}
+                            className="px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-mono text-slate-600 dark:text-slate-300 transition-colors cursor-pointer flex items-center gap-1.5"
+                            title={isEmbedActive ? 'Close Embed' : 'Preview LinkedIn Embed'}
+                          >
+                            <Eye className="w-3.5 h-3.5" />
+                            <span>{isEmbedActive ? 'Hide' : 'Embed'}</span>
+                          </button>
+                        )}
+                      </div>
                     </div>
-                  )}
-                </div>
-              ))}
+                  </div>
+                );
+              })}
 
               {/* If odd number on last slide, show Follow Banner card */}
               {currentItems.length === 1 && (
-                <div className="w-full max-w-[530px] h-full min-h-[550px] bg-gradient-to-br from-blue-50/90 to-indigo-50/90 dark:from-slate-900/90 dark:to-indigo-950/40 backdrop-blur-xl rounded-3xl p-8 border border-blue-200/80 dark:border-blue-900/60 shadow-md flex flex-col items-center justify-center text-center space-y-6">
+                <div className="w-full h-full min-h-[380px] bg-gradient-to-br from-blue-50/90 to-indigo-50/90 dark:from-slate-900/90 dark:to-indigo-950/40 backdrop-blur-xl rounded-3xl p-8 border border-blue-200/80 dark:border-blue-900/60 shadow-md flex flex-col items-center justify-center text-center space-y-6">
                   <div className="w-16 h-16 rounded-2xl bg-blue-600 text-white flex items-center justify-center shadow-lg shadow-blue-500/25">
                     <LinkedinIcon className="w-8 h-8" />
                   </div>

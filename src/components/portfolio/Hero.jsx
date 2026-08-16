@@ -61,7 +61,7 @@ export default function Hero() {
           </div>
 
           {/* Main Display Headline with Lobster Two */}
-          <div className="space-y-1">
+          <div className="space-y-1 hero-title">
             <div className="flex items-baseline flex-wrap gap-x-3 gap-y-1">
               <span className="font-lobster text-3xl sm:text-4xl lg:text-5xl text-indigo-600 dark:text-indigo-400 font-normal tracking-wide">
                 Hi, I'm
@@ -79,7 +79,7 @@ export default function Hero() {
           </div>
 
           {/* Animated Specialized-In Badge with Lobster Two */}
-          <div className="inline-flex flex-wrap items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-indigo-50/80 dark:bg-indigo-950/50 border border-indigo-200/80 dark:border-indigo-800/60 shadow-xs">
+          <div className="inline-flex flex-wrap items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-indigo-50/80 dark:bg-indigo-950/50 border border-indigo-200/80 dark:border-indigo-800/60 shadow-xs hero-subtitle">
             <span className="font-lobster text-base sm:text-lg text-indigo-700 dark:text-indigo-300 flex items-center gap-1.5 font-normal tracking-wide">
               <Terminal className="w-4 h-4" />
               Specialized in:
@@ -99,7 +99,7 @@ export default function Hero() {
           </div>
 
           {/* Styled Quote Card featuring Lobster Two font */}
-          <div className="relative p-5 sm:p-6 rounded-2xl bg-white/85 dark:bg-slate-900/85 backdrop-blur-xl border border-slate-200/90 dark:border-slate-800 shadow-sm border-l-4 border-l-indigo-600 dark:border-l-indigo-500 space-y-2.5 max-w-xl">
+          <div className="relative p-5 sm:p-6 rounded-2xl bg-white/85 dark:bg-slate-900/85 backdrop-blur-xl border border-slate-200/90 dark:border-slate-800 shadow-sm border-l-4 border-l-indigo-600 dark:border-l-indigo-500 space-y-2.5 max-w-xl hero-desc">
             <p className="font-lobster text-2xl sm:text-3xl font-normal text-slate-900 dark:text-white leading-relaxed tracking-wide">
               “I build modern web applications that are practical, responsive, and enjoyable to use.”
             </p>
@@ -109,7 +109,7 @@ export default function Hero() {
           </div>
 
           {/* Action CTA Buttons */}
-          <div className="flex flex-wrap items-center gap-3.5 pt-1 w-full sm:w-auto">
+          <div className="flex flex-wrap items-center gap-3.5 pt-1 w-full sm:w-auto hero-cta">
             <a
               href="#projects"
               className="btn-primary shadow-lg shadow-indigo-500/25 group w-full sm:w-auto text-center"
@@ -136,7 +136,7 @@ export default function Hero() {
           </div>
 
           {/* Verified Social Links */}
-          <div className="flex flex-wrap items-center gap-2.5 pt-1">
+          <div className="flex flex-wrap items-center gap-2.5 pt-1 hero-socials">
             <span className="text-[11px] font-mono uppercase font-bold text-slate-400 dark:text-slate-500 tracking-wider mr-1">
               Links:
             </span>
@@ -178,6 +178,7 @@ export default function Hero() {
               )}
             </button>
           </div>
+
 
         </div>
 
